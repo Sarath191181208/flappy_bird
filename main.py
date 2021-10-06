@@ -7,6 +7,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 288, 512
 BIRD_IMG = pygame.image.load(os.path.join("assets","bird1.png"))
 PIPE_IMG = pygame.image.load(os.path.join('assets','pipe.png'))
 BACKGROUND = pygame.image.load(os.path.join('assets',"bg.png"))
+GROUND_IMG = pygame.image.load(os.path.join('assets',"base.png"))
 
 def PYtxt(txt: str, fontSize: int = 28, font: str = 'freesansbold.ttf', fontColour: tuple = (0, 0, 0)):
     return (pygame.font.Font(font, fontSize)).render(txt, True, fontColour)
@@ -105,9 +106,28 @@ def draw(win, pipes, *args):
     for arg in args:
         arg.draw(win)
 
-    
     pygame.display.update()
 
+class Ground():
+    def __init__(self) -> None:
+        self.WIDTH =  GROUND_IMG.get_width()
+        self.IMG = GROUND_IMG
+        self.x1, self.x2 = 0, self.WIDTH
+        self.y = SCREEN_HEIGHT-GROUND_IMG.get_height()+50
+        self.vel = 5
+    
+    def draw(self,win):
+        win.blit(self.IMG, (self.x1, self.y))
+        win.blit(self.IMG, (self.x2, self.y))
+
+    def update(self):
+        self.x1 -= self.vel
+        self.x2 -= self.vel
+
+        if self.x1+self.WIDTH < 0:
+            self.x1 = self.x2+self.WIDTH
+        if self.x2+self.WIDTH < 0:
+            self.x2 = self.x1+self.WIDTH
 
 def main():
     pygame.init()
@@ -120,6 +140,7 @@ def main():
 
     bird = Bird()
     pipes = [Pipe()]
+    ground = Ground()
     run = True
     while run:
         clock.tick(FPS)
@@ -148,7 +169,8 @@ def main():
             pipes.pop(idx)
 
         bird.update()
-        draw(WIN, pipes, bird, score)
+        ground.update()
+        draw(WIN, pipes, bird, score, ground)
 
     pygame.quit()
 
