@@ -2,18 +2,23 @@ import os
 import pygame
 import random
 
+SCREEN_WIDTH, SCREEN_HEIGHT = 288, 512
+
 BIRD_IMG = pygame.image.load(os.path.join("assets","bird1.png"))
 PIPE_IMG = pygame.image.load(os.path.join('assets','pipe.png'))
+BACKGROUND = pygame.image.load(os.path.join('assets',"bg.png"))
 
 def PYtxt(txt: str, fontSize: int = 28, font: str = 'freesansbold.ttf', fontColour: tuple = (0, 0, 0)):
     return (pygame.font.Font(font, fontSize)).render(txt, True, fontColour)
-
+def point_of_collision(mask , img, point):
+    img_mask = pygame.mask.from_surface(img)
+    return mask.overlap(img_mask, point)
 # Grav = Gravity
 Grav = 3
 
 class Bird():
     def __init__(self) -> None:
-        self.x, self.y = 30,400
+        self.x, self.y = 50, SCREEN_HEIGHT*0.7
         self.vel = 0
         self.img = BIRD_IMG
         self.tick_seconds = 0
@@ -37,32 +42,69 @@ class Bird():
         y = 11 if y>11 else y
 
         self.y += y
-        self.y = self.y if self.y < 550 else 550
+        self.y = self.y if self.y < SCREEN_HEIGHT else SCREEN_HEIGHT
+    
+    def get_mask(self):
+        return pygame.mask.from_surface(self.img)
 
 class Pipe():
     def __init__(self) -> None:
         self.vel = 5
-        self.x = 400
-        self.gap = 200
+        self.x = SCREEN_WIDTH+50
+        self.gap = 150
+
+        # placeholder variable to stop scoring multiple times
+        self.passed = False
+
         self.top_img = pygame.transform.rotate(PIPE_IMG, 180)
         self.bottom_img = PIPE_IMG
-        self.y = random.randint(50,400)- self.top_img.get_height()
-        print(self.y)
+
+        self.y = random.randint(50, self.top_img.get_height())- self.top_img.get_height()
+        self.top_y, self.bottom_y = self.y, self.y+self.gap+self.top_img.get_height()
     
     def draw(self, win):
-        win.blit(self.top_img, (self.x,self.y))
-        win.blit(self.bottom_img, (self.x, self.y+self.gap+self.top_img.get_height()))
+        win.blit(self.top_img, (self.x, self.top_y))
+        win.blit(self.bottom_img, (self.x, self.bottom_y))
     
     def update(self):
         self.x -= self.vel
+    
+    def collide(self, bird):
+        bird_mask = bird.get_mask()
+
+        top_mask = pygame.mask.from_surface(self.top_img)
+        bottom_mask = pygame.mask.from_surface(self.bottom_img)
+
+        top_offset = (self.x - bird.x, self.top_y - round(bird.y))
+        bottom_offset = (self.x - bird.x, self.bottom_y - round(bird.y))
+
+        b_point = bird_mask.overlap(bottom_mask, bottom_offset)
+        t_point = bird_mask.overlap(top_mask,top_offset)
+
+        if b_point or t_point:
+            return True
+
+        return False
+
+class Text():
+    def __init__(self, x, y) -> None:
+        self.val = 0
+        self.x, self.y = x, y
+    def draw(self,win):
+        txt = PYtxt("Score : "+str(self.val),13)
+        win.blit(txt, (self.x-txt.get_width()/2, self.y-txt.get_height()/2) )
 
 
-def draw(win, *args):
+def draw(win, pipes, *args):
     WHITE = pygame.Color('#ffffff')
     win.fill(WHITE)
+    win.blit(BACKGROUND, (0,0))
+    for pipe in pipes:
+        pipe.draw(win)
 
     for arg in args:
         arg.draw(win)
+
     
     pygame.display.update()
 
@@ -70,13 +112,14 @@ def draw(win, *args):
 def main():
     pygame.init()
     clock = pygame.time.Clock()
-    WIN = pygame.display.set_mode((500,600))
+    WIN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('Flappy Bird')
     FPS = 30
 
-    bird = Bird()
-    pipe = Pipe()
+    score = Text(SCREEN_WIDTH-30,20)
 
+    bird = Bird()
+    pipes = [Pipe()]
     run = True
     while run:
         clock.tick(FPS)
@@ -86,10 +129,26 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     bird.jump()
+        rem_idxs = []
+        for idx, pipe in enumerate(pipes):
+            pipe.update()
+            if pipe.collide(bird):
+                score.val -= 1
 
-        pipe.update()
+            if not pipe.passed and pipe.x < bird.x:
+                score.val += 1
+                pipe.passed = True
+
+            if pipe.x+pipe.top_img.get_width() < 0:
+                rem_idxs.append(idx)
+                pipes.append(Pipe())
+
+        # you can't change an iterating array in python
+        for idx in rem_idxs:
+            pipes.pop(idx)
+
         bird.update()
-        draw(WIN, bird,pipe)
+        draw(WIN, pipes, bird, score)
 
     pygame.quit()
 
