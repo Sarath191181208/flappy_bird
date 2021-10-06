@@ -1,6 +1,9 @@
 import os
 import pygame
-bird_img = pygame.image.load(os.path.join("assets","bird1.png"))
+import random
+
+BIRD_IMG = pygame.image.load(os.path.join("assets","bird1.png"))
+PIPE_IMG = pygame.image.load(os.path.join('assets','pipe.png'))
 
 def PYtxt(txt: str, fontSize: int = 28, font: str = 'freesansbold.ttf', fontColour: tuple = (0, 0, 0)):
     return (pygame.font.Font(font, fontSize)).render(txt, True, fontColour)
@@ -12,7 +15,7 @@ class Bird():
     def __init__(self) -> None:
         self.x, self.y = 30,400
         self.vel = 0
-        self.img = bird_img
+        self.img = BIRD_IMG
         self.tick_seconds = 0
 
     def draw(self, win):
@@ -36,6 +39,23 @@ class Bird():
         self.y += y
         self.y = self.y if self.y < 550 else 550
 
+class Pipe():
+    def __init__(self) -> None:
+        self.vel = 5
+        self.x = 400
+        self.gap = 200
+        self.top_img = pygame.transform.rotate(PIPE_IMG, 180)
+        self.bottom_img = PIPE_IMG
+        self.y = random.randint(50,400)- self.top_img.get_height()
+        print(self.y)
+    
+    def draw(self, win):
+        win.blit(self.top_img, (self.x,self.y))
+        win.blit(self.bottom_img, (self.x, self.y+self.gap+self.top_img.get_height()))
+    
+    def update(self):
+        self.x -= self.vel
+
 
 def draw(win, *args):
     WHITE = pygame.Color('#ffffff')
@@ -47,7 +67,6 @@ def draw(win, *args):
     pygame.display.update()
 
 
-
 def main():
     pygame.init()
     clock = pygame.time.Clock()
@@ -56,6 +75,7 @@ def main():
     FPS = 30
 
     bird = Bird()
+    pipe = Pipe()
 
     run = True
     while run:
@@ -67,8 +87,9 @@ def main():
                 if event.key == pygame.K_SPACE:
                     bird.jump()
 
+        pipe.update()
         bird.update()
-        draw(WIN, bird)
+        draw(WIN, bird,pipe)
 
     pygame.quit()
 
