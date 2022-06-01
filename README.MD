@@ -1,4 +1,4 @@
-[![Run on Repl.it](https://repl.it/badge/github/Sarath191181208/Template_Generator)](https://repl.it/github/Sarath191181208/Template_Generator)
+[![Run on Repl.it](https://repl.it/badge/github/Sarath191181208/AI_FlappyBird)](https://repl.it/github/Sarath191181208/AI_FlappyBird)
 
 # AI Flappy bird
 
@@ -10,7 +10,7 @@ This project mainly uses NEAT algorithm to achieve the task of AI playing the ga
 
 ## Demo
 
-![Image](https://github.com/Sarath191181208/Template_Generator/blob/master/images/Screenshot.png)
+![Image](https://github.com/Sarath191181208/AI_FlappyBird/blob/master/images/Screenshot.png)
 
 ## Features
 
@@ -22,13 +22,13 @@ This project mainly uses NEAT algorithm to achieve the task of AI playing the ga
 Clone the project
 
 ```bash
-  git clone
+  git clone https://github.com/Sarath191181208/AI_FlappyBird
 ```
 
 Go to the project directory
 
 ```bash
-  cd ./Template_Generator
+  cd ./AI_FlappyBird
 ```
 
 Install dependencies
