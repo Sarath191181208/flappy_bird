@@ -315,5 +315,5 @@ if __name__ == "__main__":
     # main()
     local_dir = os.path.dirname(__file__)
     config_path = os.path.join(local_dir, 'feedforward.txt')
-    # run(config_path)
-    replay_genome(config_path)
+    run(config_path)
+    # replay_genome(config_path)
