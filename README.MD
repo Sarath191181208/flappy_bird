@@ -1,4 +1,4 @@
-[![Run on Repl.it](https://repl.it/badge/github/Sarath191181208/AI_FlappyBird)](https://repl.it/github/Sarath191181208/AI_FlappyBird)
+[![Run on Repl.it](https://repl.it/badge/github/Sarath191181208/flappy_bird)](https://repl.it/github/Sarath191181208/flappy_bird)
 
 # AI Flappy bird
 
@@ -10,7 +10,7 @@ This project mainly uses NEAT algorithm to achieve the task of AI playing the ga
 
 ## Demo
 
-![Image](https://github.com/Sarath191181208/AI_FlappyBird/blob/master/images/Screenshot.png)
+![Image](https://github.com/Sarath191181208/flappy_bird/blob/master/images/Screenshot.png)
 
 ## Features
 
@@ -22,13 +22,13 @@ This project mainly uses NEAT algorithm to achieve the task of AI playing the ga
 Clone the project
 
 ```bash
-  git clone https://github.com/Sarath191181208/AI_FlappyBird
+  git clone https://github.com/Sarath191181208/flappy_bird
 ```
 
 Go to the project directory
 
 ```bash
-  cd ./AI_FlappyBird
+  cd ./flappy_bird
 ```
 
 Install dependencies
